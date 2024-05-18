@@ -10,7 +10,7 @@ type HealthCheckOutput struct {
 	}
 }
 
-type MovieCreateInput struct {
+type MovieCreateIn struct {
 	Body struct {
 		data.MovieIn
 	}
@@ -22,11 +22,11 @@ type MovieCreateOut struct {
 	}
 }
 
-type MovieGetInput struct {
+type MovieGetIn struct {
 	ID uint `path:"id" minimum:"1"`
 }
 
-type MovieGetOutput struct {
+type MovieGetOut struct {
 	Body struct {
 		data.Movie
 	}

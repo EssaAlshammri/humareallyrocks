@@ -7,7 +7,7 @@ import (
 	"github.com/EssaAlshammri/humareallyrocks/internal/data"
 )
 
-func (app application) createMovieHandler(ctx context.Context, input *MovieCreateInput) (*MovieCreateOut, error) {
+func (app application) createMovieHandler(ctx context.Context, input *MovieCreateIn) (*MovieCreateOut, error) {
 	movie := &data.Movie{
 		Title:   input.Body.Title,
 		Year:    input.Body.Year,
@@ -24,9 +24,9 @@ func (app application) createMovieHandler(ctx context.Context, input *MovieCreat
 	return output, nil
 }
 
-func (app application) getMovieHandler(ctx context.Context, input *MovieGetInput) (*MovieGetOutput, error) {
+func (app application) getMovieHandler(ctx context.Context, input *MovieGetIn) (*MovieGetOut, error) {
 	id := input.ID
-	resp := &MovieGetOutput{}
+	resp := &MovieGetOut{}
 	resp.Body.ID = id
 	resp.Body.Title = "hello"
 	resp.Body.CreatedAt = time.Now().UTC()

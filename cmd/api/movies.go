@@ -2,33 +2,27 @@ package main
 
 import (
 	"context"
-	"time"
 
 	"github.com/EssaAlshammri/humareallyrocks/internal/data"
 )
 
 func (app application) createMovieHandler(ctx context.Context, input *MovieCreateIn) (*MovieCreateOut, error) {
-	movie := &data.Movie{
-		Title:   input.Body.Title,
-		Year:    input.Body.Year,
-		Runtime: input.Body.Runtime,
-		Genres:  input.Body.Genres,
-	}
-	err := app.models.Movies.Insert(movie)
+	movieOut, err := app.models.Movies.Insert(&input.Body.MovieIn)
 	if err != nil {
 		return nil, err
 	}
 	output := &MovieCreateOut{}
-	output.Body.ID = movie.ID
-	output.Body.CreatedAt = movie.CreatedAt
+	output.Body = struct{ data.MovieOut }{*movieOut}
 	return output, nil
 }
 
 func (app application) getMovieHandler(ctx context.Context, input *MovieGetIn) (*MovieGetOut, error) {
-	id := input.ID
-	resp := &MovieGetOut{}
-	resp.Body.ID = id
-	resp.Body.Title = "hello"
-	resp.Body.CreatedAt = time.Now().UTC()
-	return resp, nil
+	movie, err := app.models.Movies.Get(input.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	output := &MovieGetOut{}
+	output.Body = struct{ data.Movie }{*movie}
+	return output, nil
 }

@@ -3,6 +3,8 @@ package data
 import (
 	"database/sql"
 	"time"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Movie struct {
@@ -20,26 +22,31 @@ type MovieOut struct {
 }
 
 type MovieIn struct {
-	Title     string    `json:"title" doc:"Movie title"`
-	Year      int32     `json:"year" doc:"Movie release year"`
-	Runtime   int32     `json:"runtime" doc:"Movie runtime (in minutes)"`
-	Genres    []string  `json:"genres" doc:"genres for the movie"`
+	Title   string   `json:"title" doc:"Movie title"`
+	Year    int32    `json:"year" doc:"Movie release year" minimum:"1888"`
+	Runtime int32    `json:"runtime" doc:"Movie runtime (in minutes)"`
+	Genres  []string `json:"genres" doc:"genres for the movie"`
 }
 
 type MovieModel struct {
 	DB *sql.DB
 }
 
-func (m MovieModel) Insert(movie *Movie) error {
+func (m MovieModel) Insert(movieIn *MovieIn) (*MovieOut, error) {
 	query := `
 		INSERT INTO movies (title, year, runtime, genres) 
 		VALUES ($1, $2, $3, $4)
 		RETURNING id, created_at
 	`
 
-	args := []any{movie.Title, movie.Year, movie.Runtime, movie.Genres}
+	args := []any{movieIn.Title, movieIn.Year, movieIn.Runtime, movieIn.Genres}
 
-	return m.DB.QueryRow(query, args...).Scan(&movie.ID, &movie.CreatedAt)
+	var movieOut MovieOut
+	err := m.DB.QueryRow(query, args...).Scan(&movieOut.ID, &movieOut.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return &movieOut, nil
 }
 
 func (m MovieModel) Get(id int64) (*Movie, error) {

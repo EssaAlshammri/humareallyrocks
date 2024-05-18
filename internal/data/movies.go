@@ -43,7 +43,26 @@ func (m MovieModel) Insert(movie *Movie) error {
 }
 
 func (m MovieModel) Get(id int64) (*Movie, error) {
-	return nil, nil
+	query := `
+		SELECT id, created_at, title, year, runtime, genres
+		FROM movies
+		WHERE id = $1
+	`
+
+	var movie Movie
+	mapper := pgtype.NewMap()
+	err := m.DB.QueryRow(query, id).Scan(
+		&movie.ID,
+		&movie.CreatedAt,
+		&movie.Title,
+		&movie.Year,
+		&movie.Runtime,
+		mapper.SQLScanner(&movie.Genres),
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &movie, nil
 }
 
 func (m MovieModel) Update(movie *Movie) error {

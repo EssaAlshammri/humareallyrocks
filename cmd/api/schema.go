@@ -23,7 +23,7 @@ type MovieCreateOut struct {
 }
 
 type MovieGetIn struct {
-	ID uint `path:"id" minimum:"1"`
+	ID int64 `path:"id" minimum:"1"`
 }
 
 type MovieGetOut struct {

@@ -12,7 +12,13 @@ type HealthCheckOutput struct {
 
 type MovieCreateInput struct {
 	Body struct {
-		Name string `json:"name" maxLength:"50" doc:"movie name"`
+		data.MovieIn
+	}
+}
+
+type MovieCreateOut struct {
+	Body struct {
+		data.MovieOut
 	}
 }
 

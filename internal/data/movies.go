@@ -57,7 +57,9 @@ func (m MovieModel) Get(id int64) (*Movie, error) {
 	`
 
 	var movie Movie
+
 	mapper := pgtype.NewMap()
+
 	err := m.DB.QueryRow(query, id).Scan(
 		&movie.ID,
 		&movie.CreatedAt,
@@ -72,8 +74,28 @@ func (m MovieModel) Get(id int64) (*Movie, error) {
 	return &movie, nil
 }
 
-func (m MovieModel) Update(movie *Movie) error {
-	return nil
+func (m MovieModel) Update(id int64, movieIn *MovieIn) (*MovieOut, error) {
+	query := `
+        UPDATE movies 
+        SET title = $1, year = $2, runtime = $3, genres = $4
+        WHERE id = $5
+		RETURNING id, created_at
+	`
+
+	args := []any{
+		movieIn.Title,
+		movieIn.Year,
+		movieIn.Runtime,
+		movieIn.Genres,
+		id,
+	}
+
+	var movieOut MovieOut
+	err := m.DB.QueryRow(query, args...).Scan(&movieOut.ID, &movieOut.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return &movieOut, nil
 }
 
 func (m MovieModel) Delete(id int64) error {

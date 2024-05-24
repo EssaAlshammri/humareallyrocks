@@ -31,3 +31,16 @@ type MovieGetOut struct {
 		data.Movie
 	}
 }
+
+type MovieUpdateIn struct {
+	ID   int64 `path:"id" minimum:"1"`
+	Body struct {
+		data.MovieIn
+	}
+}
+
+type MovieUpdateOut struct {
+	Body struct {
+		data.MovieOut
+	}
+}

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/EssaAlshammri/humareallyrocks/internal/data"
+	"github.com/danielgtaylor/huma/v2"
 )
 
 func (app application) createMovieHandler(ctx context.Context, input *MovieCreateIn) (*MovieCreateOut, error) {
@@ -19,7 +20,7 @@ func (app application) createMovieHandler(ctx context.Context, input *MovieCreat
 func (app application) getMovieHandler(ctx context.Context, input *MovieGetIn) (*MovieGetOut, error) {
 	movie, err := app.models.Movies.Get(input.ID)
 	if err != nil {
-		return nil, err
+		return nil, huma.Error404NotFound("movie not found")
 	}
 
 	output := &MovieGetOut{}

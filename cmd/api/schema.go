@@ -44,3 +44,8 @@ type MovieUpdateOut struct {
 		data.MovieOut
 	}
 }
+
+
+type MovieDeleteIn struct {
+	ID int64 `path:"id" minimum:"1"`
+}

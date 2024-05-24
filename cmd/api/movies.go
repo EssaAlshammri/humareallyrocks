@@ -42,3 +42,17 @@ func (app application) updateMovieHandler(ctx context.Context, input *MovieUpdat
 	output.Body = struct{ data.MovieOut }{*movieOut}
 	return output, nil
 }
+
+func (app application) deleteMovieHandler(ctx context.Context, input *MovieDeleteIn) (*struct{}, error) {
+	_, err := app.models.Movies.Get(input.ID)
+	if err != nil {
+		return nil, huma.Error404NotFound("movie not found")
+	}
+
+	err = app.models.Movies.Delete(input.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}

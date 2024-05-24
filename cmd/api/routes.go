@@ -35,7 +35,7 @@ func (app *application) routes() http.Handler {
 		Method:      http.MethodGet,
 		Path:        "/v1/movies/{id}",
 		Summary:     "get movie by id",
-		Description: "get a new movie",
+		Description: "get a movie",
 		Tags:        []string{"movies"},
 	}, app.getMovieHandler)
 
@@ -44,9 +44,18 @@ func (app *application) routes() http.Handler {
 		Method:      http.MethodPut,
 		Path:        "/v1/movies/{id}",
 		Summary:     "update movie by id",
-		Description: "update a new movie",
+		Description: "update a movie",
 		Tags:        []string{"movies"},
 	}, app.updateMovieHandler)
+
+	huma.Register(api, huma.Operation{
+		OperationID: "DeleteMovie",
+		Method:      http.MethodDelete,
+		Path:        "/v1/movies/{id}",
+		Summary:     "delete movie by id",
+		Description: "delete a movie",
+		Tags:        []string{"movies"},
+	}, app.deleteMovieHandler)
 
 	return router
 }

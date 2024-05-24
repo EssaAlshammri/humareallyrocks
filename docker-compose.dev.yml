@@ -6,10 +6,12 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - ./postgres_data:/var/lib/postgresql/data/
+      - web-api-postgres-data:/var/lib/postgresql/data/
 
   adminer:
     image: adminer
-    restart: always
     ports:
       - 8080:8080
+
+volumes:
+  web-api-postgres-data:

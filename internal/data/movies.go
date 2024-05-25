@@ -1,6 +1,7 @@
 package data
 
 import (
+	"context"
 	"database/sql"
 	"time"
 
@@ -32,7 +33,9 @@ type MovieModel struct {
 	DB *sql.DB
 }
 
-func (m MovieModel) Insert(movieIn *MovieIn) (*MovieOut, error) {
+func (m MovieModel) Insert(ctx context.Context, movieIn *MovieIn) (*MovieOut, error) {
+	dbCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
 	query := `
 		INSERT INTO movies (title, year, runtime, genres) 
 		VALUES ($1, $2, $3, $4)
@@ -42,14 +45,16 @@ func (m MovieModel) Insert(movieIn *MovieIn) (*MovieOut, error) {
 	args := []any{movieIn.Title, movieIn.Year, movieIn.Runtime, movieIn.Genres}
 
 	var movieOut MovieOut
-	err := m.DB.QueryRow(query, args...).Scan(&movieOut.ID, &movieOut.CreatedAt)
+	err := m.DB.QueryRowContext(dbCtx, query, args...).Scan(&movieOut.ID, &movieOut.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
 	return &movieOut, nil
 }
 
-func (m MovieModel) Get(id int64) (*Movie, error) {
+func (m MovieModel) Get(ctx context.Context, id int64) (*Movie, error) {
+	dbCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
 	query := `
 		SELECT id, created_at, title, year, runtime, genres
 		FROM movies
@@ -60,7 +65,7 @@ func (m MovieModel) Get(id int64) (*Movie, error) {
 
 	mapper := pgtype.NewMap()
 
-	err := m.DB.QueryRow(query, id).Scan(
+	err := m.DB.QueryRowContext(dbCtx, query, id).Scan(
 		&movie.ID,
 		&movie.CreatedAt,
 		&movie.Title,
@@ -74,7 +79,9 @@ func (m MovieModel) Get(id int64) (*Movie, error) {
 	return &movie, nil
 }
 
-func (m MovieModel) Update(id int64, movieIn *MovieIn) (*MovieOut, error) {
+func (m MovieModel) Update(ctx context.Context, id int64, movieIn *MovieIn) (*MovieOut, error) {
+	dbCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
 	query := `
         UPDATE movies 
         SET title = $1, year = $2, runtime = $3, genres = $4
@@ -91,20 +98,22 @@ func (m MovieModel) Update(id int64, movieIn *MovieIn) (*MovieOut, error) {
 	}
 
 	var movieOut MovieOut
-	err := m.DB.QueryRow(query, args...).Scan(&movieOut.ID, &movieOut.CreatedAt)
+	err := m.DB.QueryRowContext(dbCtx, query, args...).Scan(&movieOut.ID, &movieOut.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
 	return &movieOut, nil
 }
 
-func (m MovieModel) Delete(id int64) error {
+func (m MovieModel) Delete(ctx context.Context, id int64) error {
+	dbCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
 	query := `
         DELETE FROM movies
         WHERE id = $1
 	`
 
-	result, err := m.DB.Exec(query, id)
+	result, err := m.DB.ExecContext(dbCtx, query, id)
 	if err != nil {
 		return err
 	}

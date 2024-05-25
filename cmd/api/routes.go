@@ -5,6 +5,8 @@ import (
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humachi"
+
+	// "github.com/danielgtaylor/huma/v2/autopatch"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -56,6 +58,8 @@ func (app *application) routes() http.Handler {
 		Description: "delete a movie",
 		Tags:        []string{"movies"},
 	}, app.deleteMovieHandler)
+
+	// autopatch.AutoPatch(api)
 
 	return router
 }

@@ -34,7 +34,7 @@ type MovieModel struct {
 }
 
 func (m MovieModel) Insert(ctx context.Context, movieIn *MovieIn) (*MovieOut, error) {
-	dbCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	dbCtx, cancel := context.WithTimeout(ctx, WriteTimeout)
 	defer cancel()
 	query := `
 		INSERT INTO movies (title, year, runtime, genres) 
@@ -53,7 +53,7 @@ func (m MovieModel) Insert(ctx context.Context, movieIn *MovieIn) (*MovieOut, er
 }
 
 func (m MovieModel) Get(ctx context.Context, id int64) (*Movie, error) {
-	dbCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	dbCtx, cancel := context.WithTimeout(ctx, ReadTimeout)
 	defer cancel()
 	query := `
 		SELECT id, created_at, title, year, runtime, genres
@@ -80,7 +80,7 @@ func (m MovieModel) Get(ctx context.Context, id int64) (*Movie, error) {
 }
 
 func (m MovieModel) Update(ctx context.Context, id int64, movieIn *MovieIn) (*MovieOut, error) {
-	dbCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	dbCtx, cancel := context.WithTimeout(ctx, WriteTimeout)
 	defer cancel()
 	query := `
         UPDATE movies 
@@ -106,7 +106,7 @@ func (m MovieModel) Update(ctx context.Context, id int64, movieIn *MovieIn) (*Mo
 }
 
 func (m MovieModel) Delete(ctx context.Context, id int64) error {
-	dbCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	dbCtx, cancel := context.WithTimeout(ctx, WriteTimeout)
 	defer cancel()
 	query := `
         DELETE FROM movies

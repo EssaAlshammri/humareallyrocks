@@ -8,12 +8,12 @@ import (
 )
 
 func (app application) createMovieHandler(ctx context.Context, input *MovieCreateIn) (*MovieCreateOut, error) {
-	movieOut, err := app.models.Movies.Insert(ctx, &input.Body.MovieIn)
+	movieOut, err := app.models.Movies.Insert(ctx, &input.Body)
 	if err != nil {
 		return nil, err
 	}
 	output := &MovieCreateOut{}
-	output.Body = struct{ data.MovieOut }{*movieOut}
+	output.Body = *movieOut
 	return output, nil
 }
 
@@ -24,7 +24,7 @@ func (app application) getMovieHandler(ctx context.Context, input *MovieGetIn) (
 	}
 
 	output := &MovieGetOut{}
-	output.Body = struct{ data.Movie }{*movie}
+	output.Body = *movie
 	return output, nil
 }
 
@@ -34,12 +34,12 @@ func (app application) updateMovieHandler(ctx context.Context, input *MovieUpdat
 		return nil, huma.Error404NotFound("movie not found")
 	}
 
-	movieOut, err := app.models.Movies.Update(ctx, input.ID, &input.Body.MovieIn)
+	movieOut, err := app.models.Movies.Update(ctx, input.ID, &input.Body)
 	if err != nil {
 		return nil, err
 	}
 	output := &MovieUpdateOut{}
-	output.Body = struct{ data.MovieOut }{*movieOut}
+	output.Body = *movieOut
 	return output, nil
 }
 

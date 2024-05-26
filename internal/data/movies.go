@@ -9,7 +9,7 @@ import (
 )
 
 type Movie struct {
-	ID        uint      `json:"ID" doc:"Unique integer ID for the movie"`
+	ID        uint      `json:"ID" doc:"Unique integer ID for the movie" minimum:"1"`
 	CreatedAt time.Time `json:"createdAt" doc:"Timestamp for when the movie is added to our database"`
 	Title     string    `json:"title" doc:"Movie title"`
 	Year      int32     `json:"year" doc:"Movie release year"`

@@ -59,6 +59,15 @@ func (app *application) routes() http.Handler {
 		Tags:        []string{"movies"},
 	}, app.deleteMovieHandler)
 
+	huma.Register(api, huma.Operation{
+		OperationID: "listMovie",
+		Method:      http.MethodGet,
+		Path:        "/v1/movies",
+		Summary:     "list movies",
+		Description: "list movie",
+		Tags:        []string{"movies"},
+	}, app.listMoviesHandler)
+
 	// autopatch.AutoPatch(api)
 
 	return router

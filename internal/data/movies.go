@@ -129,3 +129,44 @@ func (m MovieModel) Delete(ctx context.Context, id int64) error {
 
 	return nil
 }
+
+func (m MovieModel) GetAll(ctx context.Context, title, sort string, genres []string, page, pageSize int64) (*[]Movie, error) {
+	dbCtx, cancel := context.WithTimeout(ctx, ReadTimeout)
+	defer cancel()
+	query := `
+		SELECT id, created_at, title, year, runtime, genres
+		FROM movies
+		ORDER BY id
+	`
+	rows, err := m.DB.QueryContext(dbCtx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	movies := []Movie{}
+
+	mapper := pgtype.NewMap()
+
+	for rows.Next() {
+		var movie Movie
+		if err := rows.Scan(
+			&movie.ID,
+			&movie.CreatedAt,
+			&movie.Title,
+			&movie.Year,
+			&movie.Runtime,
+			mapper.SQLScanner(&movie.Genres),
+		); err != nil {
+			return nil, err
+		}
+		movies = append(movies, movie)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return &movies, nil
+}

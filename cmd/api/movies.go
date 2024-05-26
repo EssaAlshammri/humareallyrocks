@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 
-	"github.com/EssaAlshammri/humareallyrocks/internal/data"
 	"github.com/danielgtaylor/huma/v2"
 )
 
@@ -55,4 +54,15 @@ func (app application) deleteMovieHandler(ctx context.Context, input *MovieDelet
 	}
 
 	return nil, nil
+}
+
+func (app application) listMoviesHandler(ctx context.Context, input *MoviesListIn) (*MoviesListOut, error) {
+	movies, err := app.models.Movies.GetAll(ctx, input.Title, input.Sort, input.Genres, input.Page, input.PageSize)
+	if err != nil {
+		app.logger.Info(err.Error())
+		return nil, huma.Error400BadRequest("bad request")
+	}
+	output := &MoviesListOut{}
+	output.Body.Movies = *movies
+	return output, nil
 }

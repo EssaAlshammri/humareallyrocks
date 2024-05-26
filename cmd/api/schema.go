@@ -10,6 +10,11 @@ type HealthCheckOutput struct {
 	}
 }
 
+type PaginationParams struct {
+	Page     int64 `query:"page" minimum:"1" default:"1"`
+	PageSize int64 `query:"page_size" minimum:"1" maximum:"100" default:"10"`
+}
+
 type MovieCreateIn struct {
 	Body data.MovieIn
 }
@@ -35,7 +40,19 @@ type MovieUpdateOut struct {
 	Body data.MovieOut
 }
 
-
 type MovieDeleteIn struct {
 	ID int64 `path:"id" minimum:"1"`
+}
+
+type MoviesListIn struct {
+	Title  string   `query:"title" doc:"title of the movie"`
+	Genres []string `query:"genres" doc:"genres of the movie"`
+	Sort   string   `query:"sort" default:"id" enum:"id,title,year,runtime,-id,-title,-year,-runtime"`
+	PaginationParams
+}
+
+type MoviesListOut struct {
+	Body struct {
+		Movies []data.Movie `json:"movies"`
+	}
 }

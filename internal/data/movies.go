@@ -136,9 +136,11 @@ func (m MovieModel) GetAll(ctx context.Context, title, sort string, genres []str
 	query := `
 		SELECT id, created_at, title, year, runtime, genres
 		FROM movies
+		WHERE (LOWER(title) = LOWER($1) OR $1 = '') 
+		AND (genres @> $2 OR $2 = '{}') 
 		ORDER BY id
 	`
-	rows, err := m.DB.QueryContext(dbCtx, query)
+	rows, err := m.DB.QueryContext(dbCtx, query, title, genres)
 	if err != nil {
 		return nil, err
 	}

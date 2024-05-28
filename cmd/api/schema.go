@@ -1,6 +1,11 @@
 package main
 
-import "github.com/EssaAlshammri/humareallyrocks/internal/data"
+import (
+	"reflect"
+
+	"github.com/EssaAlshammri/humareallyrocks/internal/data"
+	"github.com/danielgtaylor/huma/v2"
+)
 
 type HealthCheckOutput struct {
 	Body struct {
@@ -49,6 +54,15 @@ type MoviesListIn struct {
 	Genres []string `query:"genres" doc:"genres of the movie"`
 	Sort   string   `query:"sort" default:"id" enum:"id,title,year,runtime,-id,-title,-year,-runtime"`
 	PaginationParams
+}
+
+func (m *MoviesListIn) Resolve(ctx huma.Context) []error {
+
+	if reflect.ValueOf(m.Genres).IsZero() {
+		m.Genres = []string{}
+	}
+
+	return nil
 }
 
 type MoviesListOut struct {

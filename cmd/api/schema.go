@@ -1,8 +1,6 @@
 package main
 
 import (
-	"reflect"
-
 	"github.com/EssaAlshammri/humareallyrocks/internal/data"
 	"github.com/danielgtaylor/huma/v2"
 )
@@ -57,8 +55,7 @@ type MoviesListIn struct {
 }
 
 func (m *MoviesListIn) Resolve(ctx huma.Context) []error {
-
-	if reflect.ValueOf(m.Genres).IsZero() {
+	if m.Genres == nil {
 		m.Genres = []string{}
 	}
 
